@@ -16,6 +16,11 @@ The first argument is the LOGO program, the second the SVG output file
 program arguments go after `--args`. Tested with CREXX 1.0.0 beta 3 built
 from source.
 
+## Manual
+
+`docs/LOGO-User-Guide.docx` is the full Introduction and User's Guide: installation,
+the language, turtle graphics, examples, messages, and how the interpreter works.
+
 ## Language
 
 | Area    | Words |

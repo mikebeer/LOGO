@@ -639,19 +639,20 @@ callfn: procedure = .string
     when name = 'POWER' then do
       x = numarg()
       b = intarg()
-      r = 1.0
+      pw = 1.0
       if b >= 0 then do
         do b
-          r = r * x
+          pw = pw * x
         end
       end
       else do
         do 0 - b
-          r = r * x
+          pw = pw * x
         end
-        r = 1.0 / r
+        if pw = 0.0 then call lerror "division by zero"
+        pw = 1.0 / pw
       end
-      return numtostr(r)
+      return numtostr(pw)
     end
     when name = 'SIN' then do
       x = numarg()
