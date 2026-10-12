@@ -29,6 +29,8 @@ options levelb
 namespace logo expose tk tko pnames pparams pstart pend sname sval nsv gname gval ngv cp lim stopflag retval depth tx ty th pen pcolor psize bg svg minx maxx miny maxy outfile palette
 
 import rxfnsb
+import cretext
+import crenum
 
 arg argv = .string[]
 
@@ -102,11 +104,6 @@ demoprogram: procedure = .string
   return s
 
 /* ------------------------------------------------------------- tokenizer */
-isws: procedure = .int
-  arg c = .string
-  if c = ' ' | c = '0a'x | c = '0d'x | c = '09'x then return 1
-  return 0
-
 isbracket: procedure = .int
   arg c = .string
   if c = '[' | c = ']' | c = '(' | c = ')' then return 1
@@ -117,18 +114,13 @@ isoperator: procedure = .int
   if c = '+' | c = '-' | c = '*' | c = '/' | c = '=' | c = '<' | c = '>' then return 1
   return 0
 
-isdigitc: procedure = .int
-  arg c = .string
-  if c >= '0' & c <= '9' & length(c) = 1 then return 1
-  return 0
-
 tokenize: procedure = .void
   arg src = .string
   n = length(src)
   i = 1
   do while i <= n
     c = substr(src, i, 1)
-    if isws(c) = 1 then do
+    if cretext..isspace(c) = 1 then do
       i = i + 1
       iterate
     end
@@ -160,7 +152,7 @@ tokenize: procedure = .void
       j = i + 1
       do while j <= n
         d = substr(src, j, 1)
-        if isws(d) = 1 | isbracket(d) = 1 then leave
+        if cretext..isspace(d) = 1 | isbracket(d) = 1 then leave
         j = j + 1
       end
       wd = substr(src, i, j - i)
@@ -169,11 +161,11 @@ tokenize: procedure = .void
       i = j
       iterate
     end
-    if isdigitc(c) = 1 | (c = '.' & isdigitc(substr(src, i + 1, 1)) = 1) then do
+    if cretext..isdigit(c) = 1 | (c = '.' & cretext..isdigit(substr(src, i + 1, 1)) = 1) then do
       j = i
       do while j <= n
         d = substr(src, j, 1)
-        if isdigitc(d) = 0 & d <> '.' then leave
+        if cretext..isdigit(d) = 0 & d <> '.' then leave
         j = j + 1
       end
       call addtok substr(src, i, j - i), substr(src, i, j - i)
@@ -184,7 +176,7 @@ tokenize: procedure = .void
     j = i
     do while j <= n
       d = substr(src, j, 1)
-      if isws(d) = 1 | isbracket(d) = 1 | isoperator(d) = 1 | d = ';' then leave
+      if cretext..isspace(d) = 1 | isbracket(d) = 1 | isoperator(d) = 1 | d = ';' then leave
       j = j + 1
     end
     call addtok upper(substr(src, i, j - i)), substr(src, i, j - i)
@@ -242,9 +234,7 @@ lerror: procedure = .void
 /* --------------------------------------------------------- number helpers */
 isnum: procedure = .int
   arg s = .string
-  if s = "" then return 0
-  if datatype(s, 'N') = '1' then return 1
-  return 0
+  return crenum..isdecimal(s)
 
 tonum: procedure = .float
   arg s = .string
