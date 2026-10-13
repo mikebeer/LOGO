@@ -7,9 +7,15 @@ parser, user procedures with dynamic scoping, and an SVG turtle.
 ## Run
 
 ```sh
-crexx logo.crexx --args examples/tree.logo tree.svg
-crexx logo.crexx                      # built-in demo, writes logo.svg
+./logo examples/tree.logo tree.svg
+./logo                                # built-in demo, writes logo.svg
 ```
+
+This branch (`cre-port`) runs on the CREXX Language Environment
+([mikebeer/language_environment](https://github.com/mikebeer/language_environment)),
+included as the git submodule `cre` (clone with `--recurse-submodules`, or run
+`git submodule update --init`). The `logo` launcher compiles the CRE modules and
+the interpreter on first use.
 
 The first argument is the LOGO program, the second the SVG output file
 (default `logo.svg`). `PRINT` and `SHOW` write to standard output. CREXX

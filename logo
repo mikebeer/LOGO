@@ -1,0 +1,27 @@
+#!/bin/sh
+# Launcher for the CREXX LOGO interpreter.
+#   ./logo [program.logo [output.svg]]
+# Uses the CREXX Language Environment (CRE), the git submodule "cre"
+# (https://github.com/mikebeer/language_environment). Set CREXX to the crexx
+# driver if it is not on your PATH.
+DIR=$(cd "$(dirname "$0")" && pwd)
+CREXX=${CREXX:-crexx}
+CRESRC="$DIR/cre/src"
+if [ ! -f "$CRESRC/cretext.crexx" ]; then
+  echo "logo: CRE not found - run: git submodule update --init" >&2
+  exit 2
+fi
+CRELIBS=""
+for m in crecond crenum cretext; do
+  CRELIBS="$CRELIBS -l $CRESRC/$m.rxbin"
+  if [ ! -f "$CRESRC/$m.rxbin" ] || [ "$CRESRC/$m.crexx" -nt "$CRESRC/$m.rxbin" ]; then
+    "$CREXX" "$CRESRC/$m.crexx" -noexec >/dev/null 2>&1 || { echo "logo: compilation of CRE module $m failed" >&2; exit 2; }
+  fi
+done
+if [ ! -f "$DIR/logo.rxbin" ] || [ "$DIR/logo.crexx" -nt "$DIR/logo.rxbin" ]; then
+  "$CREXX" "$DIR/logo.crexx" -i "$CRESRC" -noexec >/dev/null 2>&1 || {
+    echo "logo: compilation failed - run: $CREXX $DIR/logo.crexx -i $CRESRC -noexec" >&2
+    exit 2
+  }
+fi
+exec "$CREXX" "$DIR/logo.crexx" -nocompile $CRELIBS -args "$@"

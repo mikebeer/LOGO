@@ -1,2 +1,4 @@
 *.crexx-driver.lock
 *.svg
+*.rxbin
+*.rxas
